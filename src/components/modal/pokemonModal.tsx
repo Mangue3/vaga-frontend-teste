@@ -13,8 +13,6 @@ const StyledModal = styled(Modal.Body)`
 `;
 
 export default ({ showPokemonModal, handlePokeModal, modalInfo }: any) => {
-    console.log('modalInfo: ', modalInfo);
-
     if (modalInfo) {
       const stats = modalInfo.stats.map((stat: any) => {
         return {
