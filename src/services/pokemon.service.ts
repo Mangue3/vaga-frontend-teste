@@ -17,9 +17,9 @@ export class PokemonService {
 
     /**
      * @description Returns a pokemon data
-     * @param {number | string} id Pode ser o id ou o nome do pokemon 
+     * @param {number | string} id the pokemon's id or name 
      */
-    getDetailById(id: number | string) {
+    getPokemonDetail(id: number | string) {
         return axios.get(`${POKE_API_URL}pokemon/${id}/`);
     }
 }

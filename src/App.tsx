@@ -34,6 +34,8 @@ const SPA: React.FC = () => {
   const [pageCount, setPageCount] = useState<number>(0);
   const [actualOffset, setActualOffset] = useState<number>(0);
 
+  const [disablePagination, setDisablePagination] = useState<boolean>(false);
+
   const [initialFormikValues] = useState<IFilterForm>({
     name: '',
     type: '',
@@ -47,14 +49,19 @@ const SPA: React.FC = () => {
       setPokeModalInfo(modalInfo);
   }
 
-  const handlePagination = (data: IPagination) => {
+  const handlePagination = (data: IPagination): void => {
+    if (disablePagination) return;
     const { selected } = data;
     const offset = Math.ceil(selected * 10);
     setActualOffset(offset);
   }
 
+  /**
+   * @description Make a request to get the pokemon info by the name
+   * @param {string} pokemonName 
+   */
   const getPokemonData = async (pokemonName: string): Promise<IPokeCard> => {
-    return await pokemonService.getDetailById(pokemonName)
+    return await pokemonService.getPokemonDetail(pokemonName)
       .then(({ data }: any) => {
          return {
           name: pokemonName,
@@ -80,15 +87,17 @@ const SPA: React.FC = () => {
    */
   const loadList = (pokemonName = '') => {
     if (pokemonName) {
+      setDisablePagination(true);
       getPokemonData(pokemonName)
         .then(pokemonInfo => {
           setPokeList([pokemonInfo]);
         });
     } else {
+      setDisablePagination(false);
       pokemonService.listPokemons(actualOffset, pokemonName)
         .then(async ({ data }) => {
           setErrorListMessage('');
-          setPageCount(data.count);
+          setPageCount(Math.ceil(data.count / 10));
   
           let newPokePage: IPokeCard[] = [];
           await data.results.forEach(async ({ name }: any) => {

@@ -11,13 +11,16 @@
     align-items: center;
     margin-top: 20px;
 
-    li a {
-        text-decoration: none;
-        cursor: pointer;
-        color: #fff;
-        margin: 0 5px;
-        outline: 0;
-    }
+    li {
+        border: thin solid #ef5350;
+        a {
+            text-decoration: none;
+            cursor: pointer;
+            color: #fff;
+            margin: 0 5px;
+            outline: 0;
+        }
+    } 
 
     .active {
         border-radius: 3px;
