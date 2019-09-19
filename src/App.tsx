@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { IPokeCard } from './components/pokeCard/interfaces';
+import { IPokeCard, IPokeInfo } from './components/pokeCard/interfaces';
 import { PokemonService } from './services/pokemon.service';
 import { NeultralInput } from './components/input/input';
-import { SecondSucessButton, NeutralButton } from './components/button/button';
+import { SecondSucessButton } from './components/button/button';
 import { Spinner } from './components/loading';
 import PokemonLogo from './assets/imgs/pokemon.png';
 import PokemonModal from './components/modal/pokemonModal';
@@ -30,7 +30,7 @@ const SPA: React.FC = () => {
 
   // Handle modal 
   const [showPokemonModal, setShowPokemonModal] = useState<boolean>(false);
-  const [pokeModalInfo, setPokeModalInfo] = useState<any>();
+  const [pokeModalInfo, setPokeModalInfo] = useState<IPokeInfo>();
 
   // Handle pagination
   const [pageCount, setPageCount] = useState<number>(0);
@@ -45,7 +45,7 @@ const SPA: React.FC = () => {
 
   const pokemonService = new PokemonService();
 
-  const handlePokeModal = (show: boolean, modalInfo?: any): void => {
+  const handlePokeModal = (show: boolean, modalInfo?: IPokeInfo): void => {
     setShowPokemonModal(show);
     if (show && modalInfo)
       setPokeModalInfo(modalInfo);
@@ -68,7 +68,6 @@ const SPA: React.FC = () => {
          return {
           name: pokemonName,
           id: data.id,
-          description: '',
           imgUrl: data.sprites.front_default,
           handlePokeModal,
           modalInfo: {
@@ -85,9 +84,9 @@ const SPA: React.FC = () => {
 
   /**
    * @description Loads the list 
+   * @param {string} pokemonName loads a list of 1 result filtered by 1 pokemon name
    */
-  const loadList = (pokemonName = '') => {
-    console.log('initialFormikValues: ', initialFormikValues);
+  const loadList = (pokemonName = ''): void => {
     setLoadingPokeList(true);
     if (pokemonName) {
       setDisablePagination(true);
@@ -95,6 +94,7 @@ const SPA: React.FC = () => {
         .then(pokemonInfo => {
           setPokeList([pokemonInfo]);
           setLoadingPokeList(false);
+          setPageCount(1);
         });
     } else {
       setDisablePagination(false);
@@ -124,6 +124,10 @@ const SPA: React.FC = () => {
     }
   }
 
+  /**
+   * @description Loads the list by the pokemon's type
+   * @param {string} type 
+   */
   const loadListByType = (type: string): void => {
     setLoadingPokeList(true);
     pokemonService.getPokemonListByType(type)
