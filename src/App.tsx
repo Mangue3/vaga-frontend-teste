@@ -119,12 +119,43 @@ const SPA: React.FC = () => {
         .catch(_ => {
           setErrorListMessage('A server error ocurred');
           setPokeList([]);
+          setLoadingPokeList(false);
         });
     }
   }
 
-  const handleFilter = (form: IFilterForm) => {
-    loadList(form.name);
+  const loadListByType = (type: string): void => {
+    setLoadingPokeList(true);
+    pokemonService.getPokemonListByType(type, actualOffset)
+      .then(async ({ data }: any) => {
+        setErrorListMessage('');
+        setPageCount(Math.ceil(data.slot / 10));
+
+        let newPokePage: IPokeCard[] = [];
+        await data.pokemon.forEach(({ pokemon: { name } }: any) => {
+          getPokemonData(name)
+            .then(pokemonInfo => {
+              newPokePage.push(pokemonInfo);
+            });
+        })
+      
+      setTimeout(() => {
+        setPokeList(newPokePage);
+        setLoadingPokeList(false);
+      }, 1000);
+    })
+    .catch(_ => {
+      setErrorListMessage('A server error ocurred');
+      setPokeList([]);
+      setLoadingPokeList(false);
+    })
+  }
+
+  const handleFilter = ({ name, type }: IFilterForm) => {
+    if (name)
+      loadList(name);
+    if (type)
+      loadListByType(type)
   }
   
   useEffect(() => loadList(), [, actualOffset]);
@@ -171,7 +202,6 @@ const SPA: React.FC = () => {
                   </select>              
                 </fieldset>
                 <div className="col-4 d-flex justify-content-center align-items-end">
-                  {/* <NeutralButton type="button">Clear filter</NeutralButton> */}
                   <SecondSucessButton type="submit">Filter</SecondSucessButton>
                 </div>
               </form>
