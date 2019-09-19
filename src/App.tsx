@@ -47,7 +47,6 @@ const SPA: React.FC = () => {
   const loadList = () => {
     pokemonService.listPokemons(actualOffset)
       .then(async ({ data }) => {
-        setPokeList([]);
         setErrorListMessage('');
         setPageCount(data.count);
 
