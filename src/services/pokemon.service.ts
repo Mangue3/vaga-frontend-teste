@@ -8,11 +8,8 @@ export class PokemonService {
      * @param {string} pokemonName
      * @param {number} limit max size of result list
      */
-    listPokemons(offset = 0, pokemonName?: string, limit = 10): Promise<any> {
-        if (pokemonName)
-            return axios.get(`${POKE_API_URL}pokemon/${pokemonName}`);
-        else
-            return axios.get(`${POKE_API_URL}pokemon?offset=${offset}&limit=${limit}`);
+    listPokemons(offset = 0, limit = 10): Promise<any> {
+        return axios.get(`${POKE_API_URL}pokemon?offset=${offset}&limit=${limit}`);
     }
 
     /**

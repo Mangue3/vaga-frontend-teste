@@ -3,6 +3,7 @@ import { IPokeCard } from './components/pokeCard/interfaces';
 import { PokemonService } from './services/pokemon.service';
 import { NeultralInput } from './components/input/input';
 import { SecondSucessButton, NeutralButton } from './components/button/button';
+import { Spinner } from './components/loading';
 import PokemonLogo from './assets/imgs/pokemon.png';
 import PokemonModal from './components/modal/pokemonModal';
 import PokeCard from './components/pokeCard/pokeCard';
@@ -25,6 +26,7 @@ const SPA: React.FC = () => {
   // Handle list
   const [pokeList, setPokeList] = useState<IPokeCard[]>([]);
   const [errorListMessage, setErrorListMessage] = useState<string>('');
+  const [loadingPokeList, setLoadingPokeList] = useState<boolean>(false);
 
   // Handle modal 
   const [showPokemonModal, setShowPokemonModal] = useState<boolean>(false);
@@ -86,15 +88,17 @@ const SPA: React.FC = () => {
    * @description Loads the list 
    */
   const loadList = (pokemonName = '') => {
+    setLoadingPokeList(true);
     if (pokemonName) {
       setDisablePagination(true);
       getPokemonData(pokemonName)
         .then(pokemonInfo => {
           setPokeList([pokemonInfo]);
+          setLoadingPokeList(false);
         });
     } else {
       setDisablePagination(false);
-      pokemonService.listPokemons(actualOffset, pokemonName)
+      pokemonService.listPokemons(actualOffset)
         .then(async ({ data }) => {
           setErrorListMessage('');
           setPageCount(Math.ceil(data.count / 10));
@@ -109,6 +113,7 @@ const SPA: React.FC = () => {
   
           setTimeout(() => {
             setPokeList(newPokePage);
+            setLoadingPokeList(false);
           }, 1000);
         })
         .catch(_ => {
@@ -174,7 +179,8 @@ const SPA: React.FC = () => {
             }
           </Formik>
           <div className="w-100">
-            {errorListMessage && errorListMessage}
+            {loadingPokeList && <Spinner style={{ position: 'fixed', top: '48%', left: '48%' }} />}
+            {errorListMessage && <p>errorListMessage</p>}
             {pokeList.map(info => <PokeCard key={info.id} {...info} />)}
             <div className="d-flex justify-content-end">
               <ReactPaginate
