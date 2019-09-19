@@ -11,7 +11,6 @@ const Button = styled.button`
 export const SucessButton = styled(Button)`
   background-color: #ef5350;
   color: #fff;
-  align-self: flex-end;
 `;
 
 export const SecondSucessButton = styled(Button)`
