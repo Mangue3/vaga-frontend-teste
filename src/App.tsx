@@ -39,7 +39,6 @@ const SPA: React.FC = () => {
     const { selected } = data;
     const offset = Math.ceil(selected * 10);
     setActualOffset(offset);
-    loadList();
   }
 
   /**
@@ -56,7 +55,6 @@ const SPA: React.FC = () => {
         await data.results.forEach(({ name }: any) => {
           pokemonService.getDetailById(name)
             .then(({ data }: any) => {
-              console.log('data: ', data)
               const pokeCardInfo = {
                 name,
                 id: data.id,
@@ -66,8 +64,10 @@ const SPA: React.FC = () => {
                 modalInfo: {
                   baseExperience: data.base_experience,
                   stats: data.stats,
-                  types: data.types,
+                  // types: data.types,
                   imgUrl: data.sprites.front_default,
+                  weight: data.weight,
+                  height: data.height,
                   name,
                 }
               };
@@ -86,7 +86,7 @@ const SPA: React.FC = () => {
 
   } 
   
-  useEffect(() => loadList(), []);
+  useEffect(() => loadList(), [, actualOffset]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -134,10 +134,10 @@ const SPA: React.FC = () => {
             </div>
           </div>
         </div>
-          <PokemonModal 
-            handlePokeModal={handlePokeModal} 
-            showPokemonModal={showPokemonModal}
-            modalInfo={pokeModalInfo}  />
+        <PokemonModal 
+          handlePokeModal={handlePokeModal} 
+          showPokemonModal={showPokemonModal}
+          modalInfo={pokeModalInfo}  />
       </div>
     </ThemeProvider>
   );
