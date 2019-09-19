@@ -173,7 +173,7 @@ const SPA: React.FC = () => {
           <Formik initialValues={initialFormikValues} onSubmit={submitFilter}>
             {({ handleChange, handleSubmit, values }) => (
               <form className="row w-100 my-4" onSubmit={handleSubmit}>
-                <fieldset className="col-4 d-flex align-items-start justify-content-center flex-row">
+                <fieldset className="col-12 col-xl-4 d-flex align-items-start justify-content-center flex-row pb-3">
                   <label htmlFor="search-filter">Name</label>
                   <NeultralInput 
                     id="search-filter" 
@@ -182,12 +182,12 @@ const SPA: React.FC = () => {
                     onChange={handleChange} 
                     value={values.name} />
                 </fieldset>
-                <fieldset className="col-4 d-flex justify-content-center align-items-center">
+                <fieldset className="col-12 col-xl-4 d-flex justify-content-center align-items-center pb-3">
                   <label htmlFor="select-filter">Type</label>
                   <select 
                     id="select-filter"
                     name="type" 
-                    style={{ height: 30 }} 
+                    style={{ height: 30, width: 200 }}
                     className="custom-select"
                     onChange={handleChange} 
                     value={values.type}
@@ -213,7 +213,7 @@ const SPA: React.FC = () => {
                     <option value="fairy">Fairy</option>
                   </select>              
                 </fieldset>
-                <div className="col-4 d-flex justify-content-center align-items-end flex-row">
+                <div className="col-12 col-xl-4 d-flex justify-content-center align-items-end flex-row">
                   <SecondSucessButton type="submit">Filter</SecondSucessButton>
                 </div>
               </form>
