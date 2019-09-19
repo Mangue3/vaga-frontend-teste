@@ -104,17 +104,16 @@ const SPA: React.FC = () => {
           setPageCount(Math.ceil(data.count / 10));
   
           let newPokePage: IPokeCard[] = [];
-          await data.results.forEach(async ({ name }: any) => {
-            await getPokemonData(name)
+
+          for (let i = 0; i < data.results.length; i++) {
+            await getPokemonData(data.results[i].name)
               .then(pokemonInfo => {
                 newPokePage.push(pokemonInfo);
               });
-          });
+          }
   
-          setTimeout(() => {
-            setPokeList(newPokePage);
-            setLoadingPokeList(false);
-          }, 1000);
+          setPokeList(newPokePage);
+          setLoadingPokeList(false);
         })
         .catch(_ => {
           setErrorListMessage('A server error ocurred');
