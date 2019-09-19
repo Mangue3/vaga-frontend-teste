@@ -5,12 +5,28 @@ import { NeultralInput } from './components/input/input';
 import PokemonLogo from './assets/imgs/pokemon.png';
 import PokemonModal from './components/modal/pokemonModal';
 import PokeCard from './components/pokeCard/pokeCard';
+import { ThemeProvider } from 'styled-components';
+import theme from './App.theme';
+import ReactPaginate from 'react-paginate';
+import './App.scss';
 
-const App: React.FC = () => {
-  const [pokeInfos, setPokeInfos] = useState<IPokeCard[]>([]);
-  const [errorListMessage, setErrorListMessage] = useState<String>('');
+interface IPagination {
+  selected: number;
+}
+
+const SPA: React.FC = () => {
+  // Handle list
+  const [pokeList, setPokeList] = useState<IPokeCard[]>([]);
+  const [errorListMessage, setErrorListMessage] = useState<string>('');
+
+  // Handle modal 
   const [showPokemonModal, setShowPokemonModal] = useState<boolean>(false);
   const [pokeModalInfo, setPokeModalInfo] = useState<any>();
+
+  // Handle pagination
+  const [pageCount, setPageCount] = useState<number>(0);
+  const [actualOffset, setActualOffset] = useState<number>(0);
+
   const pokemonService = new PokemonService();
 
   const handlePokeModal = (show: boolean, modalInfo?: any): void => {
@@ -18,12 +34,23 @@ const App: React.FC = () => {
     if (show && modalInfo)
       setPokeModalInfo(modalInfo);
   }
-  
-  useEffect(() => {
-    pokemonService.listPokemons()
+
+  const handlePagination = (data: IPagination) => {
+    const { selected } = data;
+    const offset = Math.ceil(selected * 10);
+    setActualOffset(offset);
+    loadList();
+  }
+
+  /**
+   * @description Loads the list 
+   */
+  const loadList = () => {
+    pokemonService.listPokemons(actualOffset)
       .then(async ({ data }) => {
-        setPokeInfos([]);
+        setPokeList([]);
         setErrorListMessage('');
+        setPageCount(data.count);
 
         let newPokePage: IPokeCard[] = [];
         await data.results.forEach(({ name }: any) => {
@@ -49,52 +76,71 @@ const App: React.FC = () => {
         });
 
         setTimeout(() => {
-          setPokeInfos(newPokePage);
+          setPokeList(newPokePage);
         }, 1000);
       })
       .catch(_ => {
         setErrorListMessage('A server error ocurred');
-        setPokeInfos([]);
+        setPokeList([]);
       });
-  }, []);
+
+  } 
+  
+  useEffect(() => loadList(), []);
 
   return (
-    <div className="w-100">
-      <div className="w-50 mx-auto my-0 d-flex justify-content-center align-items-center flex-column">
-        <img src={PokemonLogo} alt="Pokemon logo" width="200" />
-        <div className="row w-100">
-          <fieldset className="col-6 d-flex align-items-start justify-content-center flex-row">
-            <label htmlFor="search-field">Digite para filtrar</label>
-            <NeultralInput id="search-field" type="text" />
-          </fieldset>
-          <fieldset className="col-6">
-            <select style={{ height: 30 }} className="custom-select" multiple>
-              <option value="1">Fire</option>
-              <option value="2">Earth</option>
-              <option value="3">Air</option>
-              <option value="3">Water</option>
-              <option value="3">Grass</option>
-              <option value="3">Normal</option>
-              <option value="3">Ice</option>
-              <option value="3">Fighting</option>
-              <option value="3">Poison</option>
-              <option value="3">Ground</option>
-              <option value="3">Flying</option>
-            </select>
-          </fieldset>
+    <ThemeProvider theme={theme}>
+      <div className="w-100">
+        <div className="w-50 mx-auto my-0 d-flex justify-content-center align-items-center flex-column">
+          <img src={PokemonLogo} alt="Pokemon logo" width="200" />
+          <div className="row w-100">
+            <fieldset className="col-6 d-flex align-items-start justify-content-center flex-row">
+              <label htmlFor="search-filter">Digite para filtrar</label>
+              <NeultralInput id="search-filter" type="text" />
+            </fieldset>
+            <fieldset className="col-6">
+              <label htmlFor="select-filter">Filtre pelo tipo</label>
+              <select id="select-filter" style={{ height: 30 }} className="custom-select" multiple>
+                <option value="1">Fire</option>
+                <option value="2">Earth</option>
+                <option value="3">Air</option>
+                <option value="4">Water</option>
+                <option value="5">Grass</option>
+                <option value="6">Normal</option>
+                <option value="7">Ice</option>
+                <option value="8">Fighting</option>
+                <option value="9">Poison</option>
+                <option value="10">Ground</option>
+                <option value="11">Flying</option>
+              </select>
+            </fieldset>
+          </div>
+          <div className="w-100">
+            {errorListMessage && errorListMessage}
+            {pokeList.map(info => <PokeCard key={info.id} {...info} />)}
+            <div className="d-flex justify-content-end">
+              <ReactPaginate
+                previousLabel={'previous'}
+                nextLabel={'next'}
+                breakLabel={'...'}
+                breakClassName={'break-me'}
+                pageCount={pageCount}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={5}
+                onPageChange={handlePagination}
+                containerClassName={'pagination'}
+                activeClassName={'active'}
+              />
+            </div>
+          </div>
         </div>
-        <div className="w-100">
-          {errorListMessage && errorListMessage}
-          {pokeInfos.map(info => <PokeCard key={info.id} {...info} />)}
-        </div>
+          <PokemonModal 
+            handlePokeModal={handlePokeModal} 
+            showPokemonModal={showPokemonModal}
+            modalInfo={pokeModalInfo}  />
       </div>
-
-      <PokemonModal 
-        handlePokeModal={handlePokeModal} 
-        showPokemonModal={showPokemonModal}
-        modalInfo={pokeModalInfo}  />
-    </div>
+    </ThemeProvider>
   );
 }
 
-export default App;
+export default SPA;

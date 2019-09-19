@@ -7,7 +7,7 @@ import { PokeCard } from './styles';
 export default ({ name, description, imgUrl, handlePokeModal, modalInfo }: IPokeCard) => (
     <PokeCard className="d-flex p-2 mt-3">
         <div>
-            <img width="100" src={imgUrl} alt={name} />
+            <img width="100" src={imgUrl} alt={`${name} image`} />
         </div>
         <div>
             <h3>{name}</h3>

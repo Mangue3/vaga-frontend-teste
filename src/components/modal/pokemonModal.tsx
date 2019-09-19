@@ -10,7 +10,6 @@ export default ({ showPokemonModal, handlePokeModal, modalInfo }: any) => {
           <Modal.Title>Pokemon description</Modal.Title>
         </Modal.Header>
 
-        
         <Modal.Body>
           <p>Modal body text goes here.</p>
         </Modal.Body>
