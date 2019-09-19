@@ -224,7 +224,7 @@ const SPA: React.FC = () => {
             {loadingPokeList && <Spinner style={{ position: 'fixed', top: '48%', left: '48%' }} />}
             {errorListMessage && <p>{errorListMessage}</p>}
             {pokeList.map(info => <PokeCard key={info.id} {...info} />)}
-            <div className="d-flex justify-content-end">
+            <div className="d-flex justify-content-end my-2">
               <ReactPaginate
                 previousLabel={'previous'}
                 nextLabel={'next'}
