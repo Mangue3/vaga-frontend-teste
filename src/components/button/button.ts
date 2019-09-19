@@ -22,5 +22,6 @@ export const SecondSucessButton = styled(Button)`
 export const NeutralButton = styled(Button)`
   border: thin solid #AAA;
   color: #AAA;
+  background-color: #fff;
   border-radius: 5px;
 `;

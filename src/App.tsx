@@ -74,7 +74,6 @@ const SPA: React.FC = () => {
           modalInfo: {
             baseExperience: data.base_experience,
             stats: data.stats,
-            // types: data.types,
             imgUrl: data.sprites.front_default,
             weight: data.weight,
             height: data.height,
@@ -88,6 +87,7 @@ const SPA: React.FC = () => {
    * @description Loads the list 
    */
   const loadList = (pokemonName = '') => {
+    console.log('initialFormikValues: ', initialFormikValues);
     setLoadingPokeList(true);
     if (pokemonName) {
       setDisablePagination(true);
@@ -126,7 +126,7 @@ const SPA: React.FC = () => {
 
   const loadListByType = (type: string): void => {
     setLoadingPokeList(true);
-    pokemonService.getPokemonListByType(type, actualOffset)
+    pokemonService.getPokemonListByType(type)
       .then(async ({ data }: any) => {
         setErrorListMessage('');
         setPageCount(Math.ceil(data.slot / 10));
@@ -151,11 +151,13 @@ const SPA: React.FC = () => {
     })
   }
 
-  const handleFilter = ({ name, type }: IFilterForm) => {
+  const submitFilter = ({ name, type }: IFilterForm) => {
     if (name)
       loadList(name);
-    if (type)
-      loadListByType(type)
+    else if (type)
+      loadListByType(type);
+    else 
+      loadList();
   }
   
   useEffect(() => loadList(), [, actualOffset]);
@@ -165,9 +167,9 @@ const SPA: React.FC = () => {
       <div className="w-100">
         <div className="w-50 mx-auto my-0 d-flex justify-content-center align-items-center flex-column">
           <img src={PokemonLogo} alt="Pokemon logo" width="200" />
-          <Formik initialValues={initialFormikValues} onSubmit={handleFilter}>
-            {({ handleChange, handleSubmit, values, errors }) => (
-              <form className="row w-100" onSubmit={handleSubmit}>
+          <Formik initialValues={initialFormikValues} onSubmit={submitFilter}>
+            {({ handleChange, handleSubmit, values }) => (
+              <form className="row w-100 my-4" onSubmit={handleSubmit}>
                 <fieldset className="col-4 d-flex align-items-start justify-content-center flex-row">
                   <label htmlFor="search-filter">Name</label>
                   <NeultralInput 
@@ -183,25 +185,32 @@ const SPA: React.FC = () => {
                     id="select-filter"
                     name="type" 
                     style={{ height: 30 }} 
-                    className="custom-select" 
-                    multiple
+                    className="custom-select"
                     onChange={handleChange} 
                     value={values.type}
                   >
-                    <option value="1">Fire</option>
-                    <option value="2">Earth</option>
-                    <option value="3">Air</option>
-                    <option value="4">Water</option>
-                    <option value="5">Grass</option>
-                    <option value="6">Normal</option>
-                    <option value="7">Ice</option>
-                    <option value="8">Fighting</option>
-                    <option value="9">Poison</option>
-                    <option value="10">Ground</option>
-                    <option value="11">Flying</option>
+                    <option value="">---</option>
+                    <option value="eletric">Eletric</option>
+                    <option value="fire">Fire</option>
+                    <option value="water">Water</option>
+                    <option value="grass">Grass</option>
+                    <option value="normal">Normal</option>
+                    <option value="ice">Ice</option>
+                    <option value="fighting">Fighting</option>
+                    <option value="poison">Poison</option>
+                    <option value="ground">Ground</option>
+                    <option value="flying">Flying</option>
+                    <option value="psychic">Psychic</option>
+                    <option value="bug">Bug</option>
+                    <option value="rock">Rock</option>
+                    <option value="ghost">Ghost</option>
+                    <option value="dark">Dark</option>
+                    <option value="dragon">Dragon</option>
+                    <option value="steel">Steel</option>
+                    <option value="fairy">Fairy</option>
                   </select>              
                 </fieldset>
-                <div className="col-4 d-flex justify-content-center align-items-end">
+                <div className="col-4 d-flex justify-content-center align-items-end flex-row">
                   <SecondSucessButton type="submit">Filter</SecondSucessButton>
                 </div>
               </form>
@@ -210,7 +219,7 @@ const SPA: React.FC = () => {
           </Formik>
           <div className="w-100">
             {loadingPokeList && <Spinner style={{ position: 'fixed', top: '48%', left: '48%' }} />}
-            {errorListMessage && <p>errorListMessage</p>}
+            {errorListMessage && <p>{errorListMessage}</p>}
             {pokeList.map(info => <PokeCard key={info.id} {...info} />)}
             <div className="d-flex justify-content-end">
               <ReactPaginate

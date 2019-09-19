@@ -22,7 +22,7 @@ export class PokemonService {
         return axios.get(`${POKE_API_URL}pokemon/${id}/`);
     }
 
-    getPokemonListByType(type: string, offset = 0, limit = 10) {
-        return axios.get(`${POKE_API_URL}type/${type}/?offset=${offset}&limit=${limit}`);
+    getPokemonListByType(type: string) {
+        return axios.get(`${POKE_API_URL}type/${type}/`);
     }
 }
