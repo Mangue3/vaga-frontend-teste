@@ -11,6 +11,8 @@ import { ThemeProvider } from 'styled-components';
 import theme from './App.theme';
 import ReactPaginate from 'react-paginate';
 import { Formik } from 'formik';
+// @ts-ignore
+import { camelToSnakeCase, snakeToCamelCase } from 'val-utils';
 import './App.scss';
 
 interface IPagination {
@@ -63,7 +65,7 @@ const SPA: React.FC = () => {
    * @param {string} pokemonName 
    */
   const getPokemonData = async (pokemonName: string): Promise<IPokeCard> => {
-    return await pokemonService.getPokemonDetail(pokemonName)
+    return pokemonService.getPokemonDetail(pokemonName)
       .then(({ data }: any) => {
          return {
           name: pokemonName,
@@ -135,17 +137,15 @@ const SPA: React.FC = () => {
         setPageCount(Math.ceil(data.slot / 10));
 
         let newPokePage: IPokeCard[] = [];
-        await data.pokemon.forEach(({ pokemon: { name } }: any) => {
-          getPokemonData(name)
+        for(let { pokemon: { name } } of data.pokemon) {
+          await getPokemonData(name)
             .then(pokemonInfo => {
               newPokePage.push(pokemonInfo);
             });
-        })
+        }
       
-      setTimeout(() => {
         setPokeList(newPokePage);
         setLoadingPokeList(false);
-      }, 1000);
     })
     .catch(_ => {
       setErrorListMessage('A server error ocurred');
